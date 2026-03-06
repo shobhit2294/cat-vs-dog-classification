@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cat vs Dog Predictor</title>
+</head>
+
+<body>
+
+<h2>Cat vs Dog Predictor</h2>
+
+<input type="file" id="image" accept="image/*">
+<br><br>
+
+<img id="preview" width="200"/>
+
+<br><br>
+
+<button onclick="predict()">Predict</button>
+
+<h3 id="result"></h3>
+
+<script>
+
+function previewImage(){
+    const file = document.getElementById("image").files[0];
+    const preview = document.getElementById("preview");
+
+    preview.src = URL.createObjectURL(file);
+}
+
+document.getElementById("image").addEventListener("change", previewImage);
+
+async function predict(){
+
+    const file = document.getElementById("image").files[0];
+
+    if(!file){
+        alert("Please upload an image");
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append("file", file);
+
+    let response = await fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        body: formData
+    });
+
+    let data = await response.json();
+
+    let resultText = "";
+
+    if(data.prediction === "Dog"){
+        resultText = "🐶 This is a DOG";
+    }else{
+        resultText = "🐱 This is a CAT";
+    }
+
+    document.getElementById("result").innerText = resultText;
+}
+
+</script>
+
+</body>
+</html>
